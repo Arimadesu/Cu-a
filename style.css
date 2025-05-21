@@ -1,3 +1,4 @@
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 :root {
   --bg-gradient-light: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   --bg-gradient-dark: linear-gradient(135deg, #2f3238, #1c1e22);
