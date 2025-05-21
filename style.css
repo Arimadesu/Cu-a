@@ -1,36 +1,64 @@
-:root {
-  --bg-light: linear-gradient(135deg, #e0f7fa, #fffde7);
-  --bg-dark: linear-gradient(135deg, #263238, #37474f);
-  --text-light: #263238;
-  --text-dark: #eceff1;
-  --primary: #42a5f5;
-  --accent: #26a69a;
-  --warning: #ffca28;
-  --progress-bg: #cfd8dc;
-  --progress-fg: #42a5f5;
+// DOM
+const body=document.body;
+const themeToggle=document.getElementById('themeToggle');
+const startBtn=document.getElementById('startBtn');
+const resetBtn=document.getElementById('resetBtn');
+const statusText=document.getElementById('statusText');
+const timerEl=document.getElementById('timer');
+const progressCircle=document.getElementById('progressCircle');
+const suggestion=document.getElementById('suggestion');
+const tipEl=document.getElementById('tip');
+const survey=document.getElementById('survey');
+const moodSelect=document.getElementById('moodSelect');
+const submitSurvey=document.getElementById('submitSurvey');
+const achievementsList=document.getElementById('achievementsList');
+
+let isWork=true, sessionCount=0, remaining=0, timerId;
+const WORK=25*60, SHORT=5*60, LONG=15*60;
+const OPENAI_PROXY='https://your-domain.com/api/ai-relax';
+
+function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function setProgress(){ const pct=(remaining/(isWork?WORK:(sessionCount%4===0?LONG:SHORT)))*283; progressCircle.style.strokeDashoffset=283-pct; }
+function updateUI(){
+  statusText.textContent = isWork?`Phiên làm việc số ${sessionCount+1}`:(sessionCount%4===0?'Nghỉ dài':'Nghỉ ngắn');
+  timerEl.textContent=fmt(remaining);
+  setProgress();
 }
-html, body { margin:0; padding:0; font-family:'Comfortaa', cursive; transition: background 0.3s, color 0.3s; }
-body.light { background: var(--bg-light); color: var(--text-light); }
-body.dark { background: var(--bg-dark); color: var(--text-dark); }
-.container { max-width: 400px; margin: 2rem auto; padding: 1rem; }
-header { display:flex; justify-content:space-between; align-items:center; }
-h1 { font-size:1.6rem; }
-.theme-toggle { background:none; border:none; font-size:1.4rem; cursor:pointer; }
-.status { text-align:center; margin:2rem 0; }
-#statusText { font-size:1.2rem; margin-bottom:1rem; }
-.timer-circle { position: relative; width:150px; height:150px; margin:0 auto; }
-.timer-circle svg { transform: rotate(-90deg); width:100%; height:100%; }
-.timer-circle circle { fill:none; stroke-width:10; }
-.timer-circle .bg { stroke: var(--progress-bg); }
-.timer-circle .progress { stroke: var(--progress-fg); stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 1s linear; }
-#timer { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.5rem; }
-.controls { text-align:center; }
-.controls .btn { padding:0.7rem 1.4rem; margin:0.4rem; border:none; border-radius:0.6rem; font-size:1rem; cursor:pointer; transition: transform 0.1s; }
-.controls .btn:hover { transform:scale(1.05); }
-.primary { background: var(--primary); color:#fff; }
-.warning { background: var(--warning); color:#263238; }
-.suggestion, .survey, .achievements { background:rgba(255,255,255,0.8); border-left:4px solid var(--accent); border-radius:0.5rem; padding:1rem; margin:1rem 0; }
-.hidden { display:none; }
-.survey select { width:100%; padding:0.5rem; margin:0.5rem 0; }
-.badges { display:flex; flex-wrap:wrap; gap:0.5rem; }
-.badge { background: var(--accent); color:#fff; padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.9rem; }
+
+async function fetchTip(){ try{
+    const res=await fetch(OPENAI_PROXY,{method:'POST'});
+    const { tip }=await res.json(); return tip;
+  }catch{ return 'Hít thở sâu và thư giãn nhẹ nhàng.'; }}
+
+async function startPhase(){ clearInterval(timerId);
+  if(isWork){ sessionCount++; remaining=WORK; suggestion.classList.add('hidden'); survey.classList.add('hidden'); }
+  else{
+    remaining=(sessionCount%4===0?LONG:SHORT);
+    suggestion.classList.remove('hidden'); tipEl.textContent='Đang tải gợi ý...';
+    tipEl.textContent=await fetchTip();
+    if(sessionCount%4===0) survey.classList.remove('hidden');
+  }
+  updateUI();
+  timerId=setInterval(()=>{
+    remaining--; updateUI();
+    if(remaining<=0){ clearInterval(timerId); isWork=!isWork; startPhase(); }
+  },1000);
+}
+
+startBtn.onclick=()=>{ isWork=true; startPhase(); };
+resetBtn.onclick=()=>{ clearInterval(timerId); isWork=true; sessionCount=0; remaining=0; suggestion.classList.add('hidden'); survey.classList.add('hidden'); achievementsList.innerHTML=''; updateUI(); };
+
+themeToggle.onclick=()=>{ body.classList.toggle('dark'); body.classList.toggle('light'); themeToggle.textContent=body.classList.contains('dark')?'☀️':'🌙'; };
+
+submitSurvey.onclick=()=>{
+  const mood=moodSelect.value;
+  const badge=document.createElement('span'); badge.className='badge'; badge.textContent=`Bạn chọn: ${mood}`;
+  achievementsList.appendChild(badge);
+  survey.classList.add('hidden');
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded',()=>{
+  progressCircle.style.strokeDasharray=283; progressCircle.style.strokeDashoffset=283;
+  isWork=true; sessionCount=0; remaining=0; updateUI();
+});
