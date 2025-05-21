@@ -1,125 +1,36 @@
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 :root {
-  --bg-gradient-light: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-  --bg-gradient-dark: linear-gradient(135deg, #2f3238, #1c1e22);
-  --text-light: #102a43;
-  --text-dark: #f1f1f1;
-  --primary-light: #6c5ce7;
-  --primary-dark: #a29bfe;
-  --success: #00b894;
-  --danger: #d63031;
-  --warning: #ff9f43;
-  --toast-bg: rgba(50,50,50,0.9);
+  --bg-light: linear-gradient(135deg, #e0f7fa, #fffde7);
+  --bg-dark: linear-gradient(135deg, #263238, #37474f);
+  --text-light: #263238;
+  --text-dark: #eceff1;
+  --primary: #42a5f5;
+  --accent: #26a69a;
+  --warning: #ffca28;
+  --progress-bg: #cfd8dc;
+  --progress-fg: #42a5f5;
 }
-
-html, body {
-  margin: 0; padding: 0;
-  font-family: 'Montserrat', sans-serif;
-  transition: background 0.3s, color 0.3s;
-}
-body.light { background: var(--bg-gradient-light); color: var(--text-light); }
-body.dark  { background: var(--bg-gradient-dark); color: var(--text-dark); }
-
+html, body { margin:0; padding:0; font-family:'Comfortaa', cursive; transition: background 0.3s, color 0.3s; }
+body.light { background: var(--bg-light); color: var(--text-light); }
+body.dark { background: var(--bg-dark); color: var(--text-dark); }
 .container { max-width: 400px; margin: 2rem auto; padding: 1rem; }
-header { display: flex; justify-content: space-between; align-items: center; }
-h1 { margin: 0; font-weight: 600; }
-
-.theme-toggle { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
-
-.btn {
-  padding: 0.6rem 1.2rem; margin: 0.3rem;
-  border: none; border-radius: 0.6rem;
-  font-size: 1rem; cursor: pointer;
-  transition: transform 0.1s, background 0.3s;
-}
-.btn:hover { transform: scale(1.05); }
-.btn:active { transform: scale(0.95); }
-.primary { background: var(--primary-light); color: #fff; }
-.success { background: var(--success); color: #fff; }
-.danger  { background: var(--danger); color: #fff; }
-.warning { background: var(--warning); color: #fff; }
-
-.progress-container {
-  width: 100%; background: rgba(0,0,0,0.1);
-  border-radius: 0.5rem; overflow: hidden;
-  height: 0.8rem; margin-bottom: 1rem;
-}
-.progress-bar {
-  height: 100%; width: 0%;
-  background: var(--primary-light);
-  transition: width 0.5s;
-}
-
-.status {
-  display: flex; justify-content: space-between;
-  font-weight: 600; margin-bottom: 1rem;
-}
-
-.custom-task { display: flex; margin-bottom: 1rem; }
-#customInput {
-  flex: 1; padding: 0.5rem;
-  border: 1px solid #ccc; border-radius: 0.5rem;
-}
-#customBtn { margin-left: 0.5rem; }
-
-.card {
-  background: rgba(255,255,255,0.85);
-  border-radius: 0.8rem; padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.timer {
-  font-size: 2.4rem; margin: 1rem 0;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%,100% { transform: scale(1); }
-  50%     { transform: scale(1.05); }
-}
-
-.quote {
-  margin-top: 1rem; font-style: italic;
-  padding: 0.5rem; background: #fff;
-  border-left: 4px solid var(--primary-light);
-  border-radius: 0.4rem;
-}
-.badges {
-  display: flex; flex-wrap: wrap;
-  gap: 0.5rem; margin: 1rem 0;
-}
-.badge {
-  padding: 0.3rem 0.6rem;
-  background: var(--primary-light);
-  color: #fff; border-radius: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.history { margin-top: 1.5rem; }
-.history h2 { margin-bottom: 0.5rem; font-size: 1.1rem; }
-#historyList {
-  list-style: none; padding: 0;
-  max-height: 120px; overflow-y: auto;
-}
-#historyList li {
-  padding: 0.3rem; border-bottom: 1px solid #eee;
-  font-size: 0.9rem;
-}
-
-.toast-container {
-  position: fixed; top: 1rem; right: 1rem;
-  display: flex; flex-direction: column; gap: 0.5rem;
-}
-.toast {
-  background: var(--toast-bg); color: #fff;
-  padding: 0.6rem 1rem; border-radius: 0.5rem;
-  opacity: 0;
-  animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
-}
-@keyframes slideIn {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); opacity:1; }
-}
-@keyframes fadeOut {
-  to { opacity:0; }
-}
-
-.hidden { display: none; }
+header { display:flex; justify-content:space-between; align-items:center; }
+h1 { font-size:1.6rem; }
+.theme-toggle { background:none; border:none; font-size:1.4rem; cursor:pointer; }
+.status { text-align:center; margin:2rem 0; }
+#statusText { font-size:1.2rem; margin-bottom:1rem; }
+.timer-circle { position: relative; width:150px; height:150px; margin:0 auto; }
+.timer-circle svg { transform: rotate(-90deg); width:100%; height:100%; }
+.timer-circle circle { fill:none; stroke-width:10; }
+.timer-circle .bg { stroke: var(--progress-bg); }
+.timer-circle .progress { stroke: var(--progress-fg); stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 1s linear; }
+#timer { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.5rem; }
+.controls { text-align:center; }
+.controls .btn { padding:0.7rem 1.4rem; margin:0.4rem; border:none; border-radius:0.6rem; font-size:1rem; cursor:pointer; transition: transform 0.1s; }
+.controls .btn:hover { transform:scale(1.05); }
+.primary { background: var(--primary); color:#fff; }
+.warning { background: var(--warning); color:#263238; }
+.suggestion, .survey, .achievements { background:rgba(255,255,255,0.8); border-left:4px solid var(--accent); border-radius:0.5rem; padding:1rem; margin:1rem 0; }
+.hidden { display:none; }
+.survey select { width:100%; padding:0.5rem; margin:0.5rem 0; }
+.badges { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.badge { background: var(--accent); color:#fff; padding:0.4rem 0.8rem; border-radius:0.4rem; font-size:0.9rem; }
