@@ -1,60 +1,70 @@
-<!-- Updated index.html with Reset Button -->
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Procrastination Killer</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Google Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body class="light">
-    <div class="container">
-      <header>
-        <h1>Procrastination Killer</h1>
-        <button id="themeToggle" class="theme-toggle">🌙</button>
-      </header>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trình Tiêu Diệt Trì Hoãn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="light">
+  <div class="container">
+    <header>
+      <h1>Trình Tiêu Diệt Trì Hoãn</h1>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
+    </header>
 
-      <main>
-        <!-- Progress Bar -->
-        <div class="progress-container">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
+    <main>
+      <!-- Thanh tiến trình -->
+      <div class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
 
-        <!-- XP & Streak -->
-        <div class="status">
-          <span id="xp">XP: 0</span>
-          <span id="streak">🔥 Streak: 0</span>
-        </div>
+      <!-- Điểm & Chuỗi ngày -->
+      <div class="status">
+        <span id="xp">Điểm: 0</span>
+        <span id="streak">Chuỗi ngày: 0</span>
+      </div>
 
-        <!-- Start Button -->
-        <button id="startBtn" class="btn primary">
-          I’m Procrastinating 😅
-        </button>
+      <!-- Nhập nhiệm vụ tùy chỉnh -->
+      <div class="custom-task">
+        <input id="customInput" type="text" placeholder="Nhập nhiệm vụ mới..." />
+        <button id="customBtn" class="btn primary">Thêm nhiệm vụ</button>
+      </div>
 
-        <!-- Challenge Card -->
-        <div id="challengeCard" class="card hidden">
-          <p id="challengeText"></p>
-          <div id="timer" class="timer">02:00</div>
-        </div>
+      <!-- Nút bắt đầu -->
+      <button id="startBtn" class="btn primary">Tôi đang trì hoãn 😅</button>
 
-        <!-- Result Buttons -->
-        <div id="resultBtns" class="hidden">
-          <button id="doneBtn" class="btn success">✅ Done</button>
-          <button id="skipBtn" class="btn danger">❌ Skip</button>
-        </div>
+      <!-- Thẻ thử thách -->
+      <div id="challengeCard" class="card hidden">
+        <p id="challengeText"></p>
+        <div id="timer" class="timer">02:00</div>
+      </div>
 
-        <!-- Reset Button -->
-        <button id="resetBtn" class="btn danger">🔄 Reset Progress</button>
-      </main>
-    </div>
+      <!-- Nút kết quả -->
+      <div id="resultBtns" class="hidden">
+        <button id="doneBtn" class="btn success">✅ Hoàn thành</button>
+        <button id="skipBtn" class="btn danger">❌ Bỏ qua</button>
+      </div>
 
-    <!-- Confetti library -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="script.js"></script>
-  </body>
+      <!-- Nút đặt lại -->
+      <button id="resetBtn" class="btn warning">🔄 Đặt lại tiến trình</button>
+
+      <!-- Câu trích dẫn & Huy hiệu -->
+      <div id="quoteBox" class="quote hidden"></div>
+      <div id="badges" class="badges"></div>
+
+      <!-- Lịch sử -->
+      <div class="history">
+        <h2>Lịch sử hoàn thành</h2>
+        <ul id="historyList"></ul>
+      </div>
+    </main>
+
+    <!-- Khung thông báo nhanh -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
