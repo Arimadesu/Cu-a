@@ -1,0 +1,60 @@
+<!-- Updated index.html with Reset Button -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Procrastination Killer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="light">
+    <div class="container">
+      <header>
+        <h1>Procrastination Killer</h1>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+      </header>
+
+      <main>
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <!-- XP & Streak -->
+        <div class="status">
+          <span id="xp">XP: 0</span>
+          <span id="streak">🔥 Streak: 0</span>
+        </div>
+
+        <!-- Start Button -->
+        <button id="startBtn" class="btn primary">
+          I’m Procrastinating 😅
+        </button>
+
+        <!-- Challenge Card -->
+        <div id="challengeCard" class="card hidden">
+          <p id="challengeText"></p>
+          <div id="timer" class="timer">02:00</div>
+        </div>
+
+        <!-- Result Buttons -->
+        <div id="resultBtns" class="hidden">
+          <button id="doneBtn" class="btn success">✅ Done</button>
+          <button id="skipBtn" class="btn danger">❌ Skip</button>
+        </div>
+
+        <!-- Reset Button -->
+        <button id="resetBtn" class="btn danger">🔄 Reset Progress</button>
+      </main>
+    </div>
+
+    <!-- Confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
