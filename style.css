@@ -1,153 +1,141 @@
-/* app.js with improved reset handling */
-// element refs
-const body = document.body;
-const themeToggle = document.getElementById('themeToggle');
-const startBtn = document.getElementById('startBtn');
-const challengeCard = document.getElementById('challengeCard');
-const challengeText = document.getElementById('challengeText');
-const timerEl = document.getElementById('timer');
-const resultBtns = document.getElementById('resultBtns');
-const doneBtn = document.getElementById('doneBtn');
-const skipBtn = document.getElementById('skipBtn');
-const resetBtn = document.getElementById('resetBtn');
-const xpEl = document.getElementById('xp');
-const streakEl = document.getElementById('streak');
-const progressBar = document.getElementById('progressBar');
-
-// state
-let xp = +localStorage.getItem('xp') || 0;
-let streak = +localStorage.getItem('streak') || 0;
-let completed = +localStorage.getItem('completed') || 0;
-let timerId = null;
-const pool = [
-  'Write down 3 key points from your last lecture',
-  'Stand up and stretch your shoulders for 30 seconds',
-  'Throw away any trash on your desk',
-  'Breathe in for 4 seconds, hold 7 seconds, exhale 8 seconds',
-  'Write a two-sentence summary of what you just studied',
-  'Do 10 jumping jacks to boost blood flow',
-  'List 2 things you are grateful for today',
-  'Organize 5 items on your desk',
-  'Read aloud one paragraph from your current textbook',
-  'Take 5 deep breaths with eyes closed',
-  'Write down your top 1 priority for the next hour',
-  'Stand and walk around your room for 1 minute',
-  'Jot down 3 questions you still have about your topic',
-  'Do a quick desk yoga pose (e.g., seated twist)',
-  'Drink a glass of water fully',
-  'Write a positive affirmation and say it out loud',
-  'Sketch a simple mind map of your current project',
-  'List 3 To-Do items you can finish in under 5 minutes',
-  'Clean your computer screen with a microfiber cloth',
-  'Write the next three steps to complete your assignment',
-  'Close your eyes and visualize finishing your study session',
-  'Wipe down your keyboard and mouse quickly',
-  'Write down one SMART goal for today',
-  'Do 15 air squats to re-energize',
-  'Clear your browser tabs, keep only one tab open',
-  'Write a one-sentence goal for your next study block',
-  'Practice box breathing (4–4–4–4) for 4 cycles',
-  'List 2 resources you can use for this topic',
-  'Take a 30-second break: stand, stretch, look away from screen',
-  'Write down one obstacle holding you back and one solution',
-];
-
-// initialize UI
-function updateStatus() {
-  xpEl.textContent = `XP: ${xp}`;
-  streakEl.textContent = `🔥 Streak: ${streak}`;
-  const pct = Math.min((completed / 10) * 100, 100);
-  progressBar.style.width = pct + '%';
-  progressBar.style.background = streak >= 5 ? '#00b894' : '';
-}
-updateStatus();
-
-// theme toggle
-themeToggle.addEventListener('click', () => {
-  body.classList.toggle('dark');
-  body.classList.toggle('light');
-  themeToggle.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
-});
-
-// start challenge
-startBtn.addEventListener('click', () => {
-  const challenge = pool[Math.floor(Math.random() * pool.length)];
-  challengeText.textContent = challenge;
-  startBtn.classList.add('hidden');
-  challengeCard.classList.remove('hidden');
-  runTimer(120);
-});
-
-function runTimer(seconds) {
-  clearInterval(timerId);
-  let remaining = seconds;
-  timerEl.textContent = formatTime(remaining);
-  resultBtns.classList.add('hidden');
-
-  timerId = setInterval(() => {
-    remaining--;
-    timerEl.textContent = formatTime(remaining);
-    if (remaining <= 0) {
-      clearInterval(timerId);
-      resultBtns.classList.remove('hidden');
-    }
-  }, 1000);
+:root {
+  --bg-gradient-light: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  --bg-gradient-dark: linear-gradient(135deg, #2c3038, #1c1f26);
+  --text-light: #343a40;
+  --text-dark: #f1f1f1;
+  --primary-light: #6c5ce7;
+  --primary-dark: #a29bfe;
+  --success: #00b894;
+  --danger: #d63031;
 }
 
-function formatTime(s) {
-  const m = String(Math.floor(s / 60)).padStart(2, '0');
-  const sec = String(s % 60).padStart(2, '0');
-  return `${m}:${sec}`;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  transition: background 0.3s, color 0.3s;
 }
 
-// result handlers
-function handleDone() {
-  xp += 10;
-  streak += 1;
-  completed += 1;
-  saveState();
-  confetti({ spread: 60, origin: { y: 0.6 } });
-  resetUI('Great job! +10 XP 🎉');
+body.light {
+  background: var(--bg-gradient-light);
+  color: var(--text-light);
 }
 
-doneBtn.addEventListener('click', handleDone);
-skipBtn.addEventListener('click', () => {
-  streak = 0;
-  saveState();
-  resetUI('Maybe next time! 😅');
-});
+body.dark {
+  background: var(--bg-gradient-dark);
+  color: var(--text-dark);
+}
 
-// reset functionality
-resetBtn.addEventListener('click', () => {
-  if (confirm('Are you sure you want to reset your progress?')) {
-    clearInterval(timerId); // Stop any running timer
-    xp = 0;
-    streak = 0;
-    completed = 0;
-    saveState();
-    updateStatus();
-    // Reset UI
-    challengeCard.classList.add('hidden');
-    resultBtns.classList.add('hidden');
-    startBtn.classList.remove('hidden');
-    timerEl.textContent = '02:00';
-    alert('Progress has been reset. Ready to start again!');
+.container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1rem;
+  text-align: center;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-toggle {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+h1 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  margin: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.primary {
+  background: var(--primary-light);
+  color: #fff;
+}
+
+.success {
+  background: var(--success);
+  color: #fff;
+}
+
+.danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timer {
+  font-size: 2.5rem;
+  margin: 1rem 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
   }
-});
-
-// common helpers
-function resetUI(message) {
-  alert(message);
-  challengeCard.classList.add('hidden');
-  resultBtns.classList.add('hidden');
-  startBtn.classList.remove('hidden');
-  clearInterval(timerId);
-  timerEl.textContent = '02:00';
-  updateStatus();
+  50% {
+    transform: scale(1.05);
+  }
 }
 
-function saveState() {
-  localStorage.setItem('xp', xp);
-  localStorage.setItem('streak', streak);
-  localStorage.setItem('completed', completed);
+.progress-container {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  height: 1rem;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--primary-light);
+  transition: width 0.5s, background 0.5s;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Dark mode overrides */
+body.dark .card {
+  background: rgba(0, 0, 0, 0.5);
+}
+body.dark .btn.primary {
+  background: var(--primary-dark);
 }
