@@ -2,67 +2,57 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Tiêu Diệt Trì Hoãn</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
+  <title>AI-Pomodoro Mental Health</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="light">
   <div class="container">
     <header>
-      <h1>Trình Tiêu Diệt Trì Hoãn</h1>
+      <h1>AI-Pomodoro Mental Health</h1>
       <button id="themeToggle" class="theme-toggle">🌙</button>
     </header>
 
-    <main>
-      <!-- Thanh tiến trình -->
-      <div class="progress-container">
-        <div id="progressBar" class="progress-bar"></div>
+    <section class="status">
+      <div id="statusText">Phiên: Chuẩn bị</div>
+      <div class="timer-circle">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" class="bg" />
+          <circle cx="50" cy="50" r="45" class="progress" id="progressCircle" />
+        </svg>
+        <div id="timer">00:00</div>
       </div>
+    </section>
 
-      <!-- Điểm & Chuỗi ngày -->
-      <div class="status">
-        <span id="xp">Điểm: 0</span>
-        <span id="streak">Chuỗi ngày: 0</span>
-      </div>
+    <section class="controls">
+      <button id="startBtn" class="btn primary">Bắt đầu Pomodoro</button>
+      <button id="resetBtn" class="btn warning">🔄 Đặt lại</button>
+    </section>
 
-      <!-- Nhập nhiệm vụ tùy chỉnh -->
-      <div class="custom-task">
-        <input id="customInput" type="text" placeholder="Nhập nhiệm vụ mới..." />
-        <button id="customBtn" class="btn primary">Thêm nhiệm vụ</button>
-      </div>
+    <section id="suggestion" class="suggestion hidden">
+      <h2>✍️ Gợi ý thư giãn AI</h2>
+      <p id="tip">–</p>
+    </section>
 
-      <!-- Nút bắt đầu -->
-      <button id="startBtn" class="btn primary">Tôi đang trì hoãn 😅</button>
+    <section id="survey" class="survey hidden">
+      <h2>Khảo sát cảm xúc</h2>
+      <p>Bạn cảm thấy thế nào sau 4 phiên?</p>
+      <select id="moodSelect">
+        <option value="tuyệt_vời">Tuyệt vời</option>
+        <option value="tốt">Tốt</option>
+        <option value="bình_thường">Bình thường</option>
+        <option value="mệt_mỏi">Mệt mỏi</option>
+        <option value="căng_thẳng">Căng thẳng</option>
+      </select>
+      <button id="submitSurvey" class="btn primary">Gửi</button>
+    </section>
 
-      <!-- Thẻ thử thách -->
-      <div id="challengeCard" class="card hidden">
-        <p id="challengeText"></p>
-        <div id="timer" class="timer">02:00</div>
-      </div>
-
-      <!-- Nút kết quả -->
-      <div id="resultBtns" class="hidden">
-        <button id="doneBtn" class="btn success">✅ Hoàn thành</button>
-        <button id="skipBtn" class="btn danger">❌ Bỏ qua</button>
-      </div>
-
-      <!-- Nút đặt lại -->
-      <button id="resetBtn" class="btn warning">🔄 Đặt lại tiến trình</button>
-
-      <!-- Câu trích dẫn & Huy hiệu -->
-      <div id="quoteBox" class="quote hidden"></div>
-      <div id="badges" class="badges"></div>
-
-      <!-- Lịch sử -->
-      <div class="history">
-        <h2>Lịch sử hoàn thành</h2>
-        <ul id="historyList"></ul>
-      </div>
-    </main>
-
-    <!-- Khung thông báo nhanh -->
-    <div id="toastContainer" class="toast-container"></div>
+    <section class="achievements">
+      <h2>🏆 Thành tựu</h2>
+      <div id="achievementsList" class="badges"></div>
+    </section>
   </div>
 
   <script src="script.js"></script>
