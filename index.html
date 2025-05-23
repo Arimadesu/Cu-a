@@ -1,60 +1,80 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AI-Pomodoro Mental Health</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>FocusNest — Pomodoro & Thinking Coach</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
-<body class="light">
-  <div class="container">
-    <header>
-      <h1>AI-Pomodoro Mental Health</h1>
-      <button id="themeToggle" class="theme-toggle">🌙</button>
-    </header>
+<body>
+  <header>
+    <div class="leftBtn">
+      <button id="toggleSidebar" title="Stats">📊</button>
+      <button id="openLibrary"  title="Library">📚</button>
+    </div>
+    <h1>FocusNest</h1>
+    <label class="switch">
+      <input type="checkbox" id="themeToggle" />
+      <span class="slider"></span>
+    </label>
+  </header>
 
-    <section class="status">
-      <div id="statusText">Phiên: Chuẩn bị</div>
-      <div class="timer-circle">
-        <svg viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" class="bg" />
-          <circle cx="50" cy="50" r="45" class="progress" id="progressCircle" />
+  <div class="layout">
+    <!-- STATS ------------------------------------------------------------>
+    <aside id="sidebar" class="collapsed">
+      <h2>Weekly Focus</h2>
+      <p id="weeklyTime">0 h 0 m</p>
+      <button id="resetWeek">Reset Weekly</button>
+      <h3>History</h3>
+      <ul id="history"></ul>
+    </aside>
+
+    <!-- MAIN ------------------------------------------------------------->
+    <main id="center">
+      <div class="dial" id="dial">
+        <svg width="300" height="300" viewBox="0 0 300 300">
+          <circle cx="150" cy="150" r="135" class="track"/>
+          <circle cx="150" cy="150" r="135" id="progressCircle" class="progress"/>
         </svg>
-        <div id="timer">00:00</div>
+        <div id="tree"></div>
       </div>
-    </section>
 
-    <section class="controls">
-      <button id="startBtn" class="btn primary">Bắt đầu Pomodoro</button>
-      <button id="resetBtn" class="btn warning">🔄 Đặt lại</button>
-    </section>
+      <div id="time" class="timerDisplay">25:00</div>
+      <p id="status">WORK</p>
+      <p id="tip" class="tip"></p>
+      <p id="breakHint" class="tip"></p>
 
-    <section id="suggestion" class="suggestion hidden">
-      <h2>✍️ Gợi ý thư giãn AI</h2>
-      <p id="tip">–</p>
-    </section>
-
-    <section id="survey" class="survey hidden">
-      <h2>Khảo sát cảm xúc</h2>
-      <p>Bạn cảm thấy thế nào sau 4 phiên?</p>
-      <select id="moodSelect">
-        <option value="tuyệt_vời">Tuyệt vời</option>
-        <option value="tốt">Tốt</option>
-        <option value="bình_thường">Bình thường</option>
-        <option value="mệt_mỏi">Mệt mỏi</option>
-        <option value="căng_thẳng">Căng thẳng</option>
-      </select>
-      <button id="submitSurvey" class="btn primary">Gửi</button>
-    </section>
-
-    <section class="achievements">
-      <h2>🏆 Thành tựu</h2>
-      <div id="achievementsList" class="badges"></div>
-    </section>
+      <div class="controls">
+        <button id="start">Start</button>
+        <button id="pause" disabled>Pause</button>
+        <button id="skip">Skip ⏭️</button>
+        <button id="reset">Reset</button>
+      </div>
+      <div id="cycles">Cycle 0 / 4</div>
+    </main>
   </div>
 
-  <script src="script.js"></script>
+  <footer>
+    Made with ❤️ | <a href="https://pomodorotechnique.com/" target="_blank">Pomodoro Technique</a>
+  </footer>
+
+  <!-- POP-UP TECHNIQUE COACH -------------------------------------------->
+  <div id="coachCard" class="modal hidden">
+    <div class="card">
+      <h2 id="coachName"></h2>
+      <p id="coachDesc"></p>
+      <button id="coachClose">Got it!</button>
+    </div>
+  </div>
+
+  <!-- LIBRARY MODAL ------------------------------------------------------>
+  <div id="libraryModal" class="modal hidden">
+    <div class="libPanel">
+      <h2>Thinking Technique Library</h2>
+      <ul id="libList"></ul>
+      <button id="libClose">Close</button>
+    </div>
+  </div>
 </body>
 </html>
