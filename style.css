@@ -1,64 +1,123 @@
-// DOM
-const body=document.body;
-const themeToggle=document.getElementById('themeToggle');
-const startBtn=document.getElementById('startBtn');
-const resetBtn=document.getElementById('resetBtn');
-const statusText=document.getElementById('statusText');
-const timerEl=document.getElementById('timer');
-const progressCircle=document.getElementById('progressCircle');
-const suggestion=document.getElementById('suggestion');
-const tipEl=document.getElementById('tip');
-const survey=document.getElementById('survey');
-const moodSelect=document.getElementById('moodSelect');
-const submitSurvey=document.getElementById('submitSurvey');
-const achievementsList=document.getElementById('achievementsList');
-
-let isWork=true, sessionCount=0, remaining=0, timerId;
-const WORK=25*60, SHORT=5*60, LONG=15*60;
-const OPENAI_PROXY='https://your-domain.com/api/ai-relax';
-
-function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
-function setProgress(){ const pct=(remaining/(isWork?WORK:(sessionCount%4===0?LONG:SHORT)))*283; progressCircle.style.strokeDashoffset=283-pct; }
-function updateUI(){
-  statusText.textContent = isWork?`Phiên làm việc số ${sessionCount+1}`:(sessionCount%4===0?'Nghỉ dài':'Nghỉ ngắn');
-  timerEl.textContent=fmt(remaining);
-  setProgress();
-}
-
-async function fetchTip(){ try{
-    const res=await fetch(OPENAI_PROXY,{method:'POST'});
-    const { tip }=await res.json(); return tip;
-  }catch{ return 'Hít thở sâu và thư giãn nhẹ nhàng.'; }}
-
-async function startPhase(){ clearInterval(timerId);
-  if(isWork){ sessionCount++; remaining=WORK; suggestion.classList.add('hidden'); survey.classList.add('hidden'); }
-  else{
-    remaining=(sessionCount%4===0?LONG:SHORT);
-    suggestion.classList.remove('hidden'); tipEl.textContent='Đang tải gợi ý...';
-    tipEl.textContent=await fetchTip();
-    if(sessionCount%4===0) survey.classList.remove('hidden');
+/* ---------- COLORS & THEME ---------- */
+:root{
+    --bg:#f0fdf4;
+    --fg:#065f46;
+    --accent:#10b981;
+    --btn-bg:#fff;
+    --btn-fg:#065f46;
   }
-  updateUI();
-  timerId=setInterval(()=>{
-    remaining--; updateUI();
-    if(remaining<=0){ clearInterval(timerId); isWork=!isWork; startPhase(); }
-  },1000);
+  [data-theme="dark"]{
+    --bg:#0f172a;
+    --fg:#e2e8f0;
+    --btn-bg:#1e293b;
+    --btn-fg:#e2e8f0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  
+  /* ---------- BASIC LAYOUT ---------- */
+  body{background:var(--bg);color:var(--fg);min-height:100vh;display:flex;flex-direction:column}
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    max-width:1400px;width:100%;margin:0 auto;padding:1rem 1.5rem;
+  }
+  h1{font-size:1.6rem}
+  .switch{position:relative;width:52px;height:28px}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:var(--btn-bg);border-radius:28px;box-shadow:inset 0 0 3px rgba(0,0,0,.3);cursor:pointer}
+  .slider::before{content:"";position:absolute;left:4px;top:4px;width:20px;height:20px;background:var(--accent);border-radius:50%;transition:transform .25s}
+  input:checked + .slider::before{transform:translateX(24px)}
+  #toggleSidebar{background:none;border:none;font-size:1.35rem;cursor:pointer}
+  
+  /* ---------- FLEX AREA ---------- */
+  .layout{
+    flex:1;display:flex;align-items:flex-start;gap:1.5rem;
+    max-width:1400px;width:100%;margin:0 auto;padding:0 1rem;
+  }
+  
+  /* --- SIDEBAR --- */
+  #sidebar{
+    width:260px;flex-shrink:0;overflow:hidden;
+    background:var(--btn-bg);border:2px solid var(--accent);border-radius:1rem;
+    padding:1rem;transition:width .3s,padding .3s,border .3s;
+  }
+  #sidebar.collapsed{width:0;padding:0;border:none}
+  #sidebar h2{font-size:1.25rem;margin-bottom:.4rem;text-align:center}
+  #sidebar h3{margin:.8rem 0 .3rem;font-size:.95rem;border-bottom:1px solid var(--accent)}
+  #sidebar ul{list-style:none;max-height:260px;overflow-y:auto;font-size:.85rem}
+  #sidebar li{margin:.25rem 0}
+  
+  /* --- MAIN CENTER --- */
+  #center{flex:1;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+  
+  /* ---------- DIAL ---------- */
+  .dial{
+    position:relative;width:300px;height:300px;margin:0 auto;
+    touch-action:none;            /* block pinch-zoom while dragging */
+  }
+  .dial svg,#tree{pointer-events:none}
+  .track{fill:none;stroke:rgba(0,0,0,.08);stroke-width:16}
+  .progress{
+    fill:none;stroke:var(--accent);stroke-width:16;stroke-linecap:round;
+    transform:rotate(-90deg);transform-origin:50% 50%;
+    stroke-dasharray:848;stroke-dashoffset:0;
+  }
+  #tree{
+    position:absolute;bottom:40px;left:50%;transform:translateX(-50%) scaleY(0);
+    width:70px;height:140px;background:url('https://i.imgur.com/f03qgFz.png') center bottom/contain no-repeat;
+    transform-origin:50% 100%;transition:transform .2s linear;
+  }
+  
+  /* ---------- TEXTS ---------- */
+  .timerDisplay{font-size:clamp(3rem,10vw,6rem);font-variant-numeric:tabular-nums}
+  #status{font-weight:600;letter-spacing:.05em}
+  .tip{font-style:italic;opacity:.8}
+  #breakHint{font-size:.95rem}
+  
+  /* ---------- BUTTONS ---------- */
+  .controls{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+  .controls button{
+    background:var(--btn-bg);color:var(--btn-fg);
+    border:2px solid var(--accent);padding:.45rem 1.2rem;font-size:1rem;
+    border-radius:1rem;cursor:pointer;transition:transform .1s,box-shadow .1s;
+  }
+  .controls button:disabled{opacity:.5;cursor:not-allowed}
+  .controls button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 4px 6px -2px rgba(0,0,0,.2)}
+  
+  footer{padding:1rem;text-align:center;font-size:.85rem}
+  
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:760px){
+    .layout{flex-direction:column;align-items:center}
+    #sidebar{width:90%;align-self:center}
+  }
+  /* (…giữ nguyên các rule đã có…) */
+
+/* ---------- HEADER buttons ---------- */
+.leftBtn button{background:none;border:none;font-size:1.4rem;cursor:pointer;margin-right:.4rem}
+
+/* ---------- MODAL & COACH CARD ---------- */
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;z-index:50;
 }
+.hidden{display:none}
+.card{
+  background:var(--btn-bg);color:var(--fg);border:3px solid var(--accent);
+  border-radius:1rem;padding:1.2rem 1.6rem;max-width:320px;text-align:center;
+  animation:pop .25s ease;
+}
+.card h2{margin-bottom:.5rem}
+.card button{margin-top:.8rem}
 
-startBtn.onclick=()=>{ isWork=true; startPhase(); };
-resetBtn.onclick=()=>{ clearInterval(timerId); isWork=true; sessionCount=0; remaining=0; suggestion.classList.add('hidden'); survey.classList.add('hidden'); achievementsList.innerHTML=''; updateUI(); };
-
-themeToggle.onclick=()=>{ body.classList.toggle('dark'); body.classList.toggle('light'); themeToggle.textContent=body.classList.contains('dark')?'☀️':'🌙'; };
-
-submitSurvey.onclick=()=>{
-  const mood=moodSelect.value;
-  const badge=document.createElement('span'); badge.className='badge'; badge.textContent=`Bạn chọn: ${mood}`;
-  achievementsList.appendChild(badge);
-  survey.classList.add('hidden');
-};
-
-// Initialize
-document.addEventListener('DOMContentLoaded',()=>{
-  progressCircle.style.strokeDasharray=283; progressCircle.style.strokeDashoffset=283;
-  isWork=true; sessionCount=0; remaining=0; updateUI();
-});
+/* ---------- LIBRARY PANEL ---------- */
+.libPanel{
+  width:340px;max-height:70vh;overflow-y:auto;
+  background:var(--btn-bg);color:var(--fg);border:3px solid var(--accent);
+  border-radius:1rem;padding:1rem 1.4rem;
+  animation:pop .25s ease;
+}
+.libPanel h2{text-align:center;margin-bottom:.6rem}
+#libList{list-style:none;font-size:.9rem}
+#libList li{margin:.35rem 0}
+#libList li span{font-weight:600}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
